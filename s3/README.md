@@ -82,3 +82,5 @@ Requests for a bucket that isn't listed in `$ALLOW` are rejected outright. Note 
 | Upload part | `PUT` with `partNumber` and `uploadId` | |
 | Complete multipart upload | `POST` with `uploadId` | assembles parts in ascending part-number order |
 | Abort multipart upload | `DELETE` with `uploadId` | deletes any staged parts |
+
+[Original documentation on parser.ru](https://www.parser.ru/lib/s3/)
