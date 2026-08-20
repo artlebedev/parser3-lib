@@ -1,0 +1,69 @@
+# подключаем класс или его потомка. это можно сделать в корневом auto.p
+@USE
+antiflood.p
+
+
+###########################################################################
+@main[][sUid;bShowForm]
+# получаем uid
+$sUid[^antiflood:get[$form:uid]]
+
+$bShowForm(1)
+
+^if(def $form:uid){
+	^rem{ *** пришло $form:uid - пост€т форму *** }
+	^try{
+		^antiflood:exec{
+			^rem{ *** провер€ем все-ли в форме заполнено как надо *** }
+			^check[]
+
+			^rem{ *** тут ваш код по добавлению пришедших данных куда вам больше хочетс€ *** }
+			...
+
+			<p>¬аше сообщение было успешно добавлено.</p>
+			$bShowForm(0)
+		}
+	}{
+		^if($exception.type eq "antiflood"){
+			$exception.handled(1)
+			<p>¬аше сообщение уже было добавлено <b>ранее</b>.</p>
+			$bShowForm(0)
+		}
+		^if($exception.type eq "check"){
+			$exception.handled(1)
+			<p>Ќе заполнены об€зательные пол€ формы.</p>
+		}
+	}
+}{
+	^rem{ *** если пост€т данные и нет $form:uid - это спамер *** }
+	^if(def $env:REQUEST_METHOD && ^env:REQUEST_METHOD.upper[] eq "POST"){
+		$response:status(404)
+	}
+}
+
+^if($bShowForm){
+	^rem{ *** если надо - показываем форму *** }
+	<form method="post">
+		<input type="hidden" name="uid" value="$sUid" />
+    	
+		<i>* »м€:</i><br />
+		<input type="text" name="name" value="$form:name" /><br />
+    	
+		<i>E-mail:</i><br />
+		<input type="text" name="email" value="$form:email" /><br />
+    	
+		<i>—ообщение:</i><br />
+		<textarea name="text">$form:text</textarea><br />
+    	
+		<input type="submit" name="action" value="ќтправить" />
+	</form>
+}
+#end @main[]
+
+
+###########################################################################
+@check[]
+^if(!def $form:name){
+	^throw[check;Ќе заполнены об€зательные пол€ формы.]
+}
+#end @check[]

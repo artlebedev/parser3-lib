@@ -1,0 +1,64 @@
+# ВНИМАНИЕ! НЕ ЗАБУДЬТЕ УДАЛИТЬ ЭТОТ ФАЙЛ С РАБОЧЕГО САЙТА!
+
+@main[]
+^rem{ *** устанавливаем соединение с sql сервером *** }
+^oSql.server{
+	^rem{ *** создаем объект класса auth *** }
+	$auth[^auth::init[$cookie:CLASS;$form:fields;$.csql[$oSql]]]
+
+	^if(def $form:[auth.logout] || (def $form:[auth.logon] && $auth.is_logon)){
+		^rem{ *** при logon/logout делаем external redirect на себя *** }
+		$response:location[http://${env:SERVER_NAME}^request:uri.match[\?.*][]{}?^math:random(100)]
+	}
+	
+	^rem{ *** устанавливаем антикеширующие заголовки *** }
+	^auth.setExpireHeaders[]
+	
+	<a href="./_auth_profile.html">^if($auth.is_logon){Изменить параметры}{Регистрация}</a> &gt^;&gt^;<br />
+
+	^if(!$auth.is_logon){
+
+		^rem{ *** если пользователь не залогинен - выводим форму для логина *** }
+		^auth.htmlFormLogon[
+			$.target_url[./_auth_info.html]
+		]
+		
+		^if(def $form:[auth.logon]){
+			<p>Забыли пароль?<br />Воспользуйтесь <a href="/_auth_forgot.html">данной формой</a> для того чтобы установить себе новый пароль.</p>
+		}
+	}
+
+	^rem{ *** информация о сессии *** }
+	<p>
+		<b>Информация о сессии:</b><br />
+		Тип инициализации: $auth.init_type<br />
+		Идентификатор сессии: $auth.session.session_id<br />
+		Сессионная кука: $auth.session.sid<br />
+		Пользовательская кука: $auth.session.uid<br />
+		Дата последнего доступа: $auth.session.dt_access<br />
+	</p>
+
+	^rem{ *** информация о группах, зарегистрированных в системе *** }
+	<p>
+		<b>Группы:</b><br />
+		^auth.groups.menu{$auth.groups.name}[<br />]
+	</p>
+	
+	^if($auth.is_logon){
+		^rem{ *** информация о пользователе *** }
+		<p>
+			<b>Информация о пользователе:</b><br />
+			Логин: $auth.user.name<br />
+			Email: $auth.user.email<br />
+			Состоит в группах: ^auth.user.groups.menu{$auth.user.groups.name}[, ]<br />
+			Дата регистрации: $auth.user.dt_register<br />
+			Дата последнего логина: $auth.user.dt_logon
+		</p>
+	}{
+		<p>Последний раз подключался пользователь: $auth.last_name</p>
+	}
+	
+	^rem{ *** выводим форму для логаута. если пользователь не залогинен форма показана не будет *** }
+	^auth.htmlFormLogout[$.target_url[./_auth_info.html]]
+}
+

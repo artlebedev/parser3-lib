@@ -1,0 +1,37 @@
+# ВНИМАНИЕ! НЕ ЗАБУДЬТЕ УДАЛИТЬ ЭТОТ ФАЙЛ С РАБОЧЕГО САЙТА!
+
+@main[]
+&lt^;&lt^; <a href="./_auth_info.html">Информация о сессии</a>
+<h2>Назначение нового пароля пользователю Admin</h3>
+
+#^if(!def $env:REMOTE_ADDR || !^env.REMOTE_ADDR.match[^^127\.]){^throw[auth;Permission denied]}
+
+^if(def $form:code && def $form:do){
+	^rem{ *** устанавливаем соединение с sql сервером *** }
+	^oSql.server{
+		^rem{ *** создаем объект класса auth *** }
+		$auth[^auth::init[$cookie:CLASS;;$.csql[$oSql]]]
+
+		$admin_id(3)
+		^oSql.void{
+			UPDATE
+				auser
+			SET
+				passwd = '^auth.cryptPassword[$form:code]'
+			WHERE
+				auser_id = $admin_id
+		}
+		^auth.clearUserSessions[$admin_id;$auth.session.session_id]
+		<p>Пользователю Admin успешно установлен пароль $form:code</p>
+	}
+}{
+	^rem{ *** показываем форму *** }
+	$password[^math:md5[^math:random(1000)]]
+
+	<form method="post">
+		<input type="hidden" name="do" value="do" />
+		Новый пароль:<br />
+		<input type="text" name="code" value="^password.left(10)" size="20" /><br />
+		<input type="submit" name="action" value="Установить" />
+	</form>
+}

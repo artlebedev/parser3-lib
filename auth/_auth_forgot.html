@@ -1,0 +1,68 @@
+# ВНИМАНИЕ! НЕ ЗАБУДЬТЕ УДАЛИТЬ ЭТОТ ФАЙЛ С РАБОЧЕГО САЙТА!
+
+@main[]
+^rem{ *** устанавливаем соединение с sql сервером *** }
+^oSql.server{
+	^rem{ *** создаем объект класса auth *** }
+	$auth[^auth::init[$cookie:CLASS;$form:fields;$.csql[$oSql]]]
+	
+	&lt^;&lt^; <a href="./_auth_info.html">Информация о сессии</a>
+
+	^rem{ *** устанавливаем антикеширующие заголовки *** }
+	^auth.setExpireHeaders[]
+
+	<h2>Забыли пароль?</h2>
+	$is_show_form(1)
+	
+	^if(def $form:code){
+		^try{
+			^auth.setPasswdFromTemporary[$form:email;$form:name;$form:code]
+			^auth.logon[
+				$.[auth.logon][do]
+				$.[auth.name][$form:name]
+				$.[auth.passwd][$form:code]
+			]
+			$is_show_form(0)
+			<p>Пользователю '$form:name' успешно установлен новый пароль '$form:code'.</p>
+			<p>Настоятельно рекомендуется зайти в <a href="/_auth_profile.html">профайл</a> и изменить его.</p>
+		}{
+			$exception.handled(1)
+			$errors[^auth.decodeError[]]
+			<p>При активации нового пароля возникли следующие проблемы: ^errors.menu{$errors.name}[, ].</p>
+		}
+	}
+
+	^if(def $form:do){
+		^try{
+			$sCode[^auth.setTemporaryPasswd[$form:[auth.email];$form:[auth.name]]]
+
+			^mail:send[
+				$.from[misha@design.ru]
+				$.to[$form:[auth.email]]
+				$.subject[New password for user]
+				$.text[http://$env:SERVER_NAME/_auth_forgot.html?name=^taint[uri][$form:[auth.name]]&email=^taint[uri][$form:[auth.email]]&code=$sCode]
+			]
+
+			$is_show_form(0)
+			<p>На ваш электронный адрес выслана ссылка, зайдя по которой вы установете новый пароль пользователю '$form:[auth.name]'.</p>
+		}{
+			$exception.handled(1)
+			$errors[^auth.decodeError[]]
+			<p>При создании нового пароля возникли следующие проблемы: ^errors.menu{$errors.name}[, ].</p>
+		}
+	}
+	
+	^if($is_show_form){
+		^untaint[html]{
+			<form method="post" action="/_auth_forgot.html">
+				<input type="hidden" name="do" value="do" />
+				Логин:<br />
+				<input type="text" name="auth.name" value="^if(def $form:[auth.name]){$form:[auth.name]}{$auth.last_name}" /><br />
+				E-mail:<br />
+				<input type="text" name="auth.email" value="$form:[auth.email]"/><br />
+				<input type="submit" name="action" value="Прислать пароль" />
+			</form>
+		}
+	}
+}
+

@@ -1,0 +1,157 @@
+###########################################################################
+@main[]
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="$sCssPath/slider.css">
+</head>
+<body>
+<div id="pickerPanel" class="dragPanel">
+
+	<div id="pickerDiv">
+		<img id="pickerbg" src="$sImagePath/slider/pickerbg.png" alt="" />
+		<div id="selector"><img src="$sImagePath/slider/select.gif" /></div>
+	</div>
+
+	<div id="hueBg" style="background:url($sImagePath/slider/hue.png) no-repeat;">
+		<div id="hueThumb"><img src="$sImagePath/slider/hline.png" /></div>
+	</div>
+
+	<div id="pickerSwatch"></div>
+	
+	<form onsubmit="return false;">
+		<table id="Buttons" cellpadding="0"cellspacing="0" border="0">
+		<tr>
+			<td><input id="Ok" type="submit" name="ok" value="&nbsp;Ok&nbsp;" onclick="return setOpenerColor();" /></td>
+			<td align="right"><input id="Cancel" type="submit" name="cancel" value="Cancel" onclick="return closeWindow();" /></td>
+		</tr>
+		</table>
+	</form>
+
+</div>
+
+<script type="text/javascript" src="$sScriptPath/slider/YAHOO.js"></script>
+<script type="text/javascript" src="$sScriptPath/slider/color.js"></script>
+<script type="text/javascript" src="$sScriptPath/slider/event.js"></script>
+<script type="text/javascript" src="$sScriptPath/slider/dom.js"></script>
+<script type="text/javascript" src="$sScriptPath/slider/dragdrop.js"></script>
+<script type="text/javascript" src="$sScriptPath/slider/slider.js"></script>
+
+<script type="text/javascript">
+	var hue;
+	var picker;
+	var r, g, b;
+
+	window.onload = pickerInit;
+
+	function setOpenerColor(){
+		var rgb = getRBG();
+		var rgb_hex = YAHOO.util.Color.rgb2hex(rgb[0], rgb[1], rgb[2]);
+		opener.chatSetColor(rgb_hex);
+		return closeWindow();
+	}
+	
+	function closeWindow(){
+		window.opener.focus(); 
+		window.close(); 
+		return false;
+	}
+
+    // Picker ---------------------------------------------------------
+
+    function pickerInit() {
+		hue = YAHOO.widget.Slider.getVertSlider("hueBg", "hueThumb", 0, 180);
+		hue.onChange = function(newVal) { hueUpdate(newVal); };
+
+		picker = YAHOO.widget.Slider.getSliderRegion("pickerDiv", "selector", 0, 180, 0, 180);
+		picker.onChange = function(newX, newY) { pickerUpdate(newX, newY); };
+		
+		if( opener ){
+			pickerSet(opener.chatGetColor());
+			
+		} else {
+			pickerSet('000000');
+		}
+		// hueUpdate();
+	}
+
+	function pickerUpdate(newX, newY) {
+		pickerSwatchUpdate();
+	}
+
+	function hueUpdate(newVal) {
+		var h = (180 - hue.getValue()) / 180;
+		if (h == 1) { h = 0; }
+
+		var a = YAHOO.util.Color.hsv2rgb( h, 1, 1);
+
+		document.getElementById("pickerDiv").style.backgroundColor = "rgb(" + a[0] + ", " + a[1] + ", " + a[2] + ")";
+
+		pickerSwatchUpdate();
+	}
+
+	function pickerSwatchUpdate() {
+		var a = getRBG();
+
+		document.getElementById("pickerSwatch").style.backgroundColor = "rgb(" + a[0] + ", " + a[1] + ", " + a[2] + ")";
+	}
+	
+	function getRBG() {
+		var h = (180 - hue.getValue());
+		if (h == 180) { h = 0; }
+
+		h = h / 180;
+		var s = picker.getXValue() / 180;
+
+		var v = (180 - picker.getYValue()) / 180;
+
+		return YAHOO.util.Color.hsv2rgb( h, s, v );
+	}
+	
+	function pickerSet(rgbColor){
+		var rgb = YAHOO.util.Color.hex2rgb(rgbColor);
+		var hsv = YAHOO.util.Color.rgb2hsv( rgb[0], rgb[1], rgb[2] );
+		
+		hue.setValue( 180 - hsv[0]*180 );
+		picker.setRegionValue( hsv[1]*180, 180 - hsv[2]*180 );
+		hueUpdate();
+	}
+
+</script>
+
+
+<!--[if gte IE 5.5000]>
+<script type="text/javascript">
+
+function correctPNG() // correctly handle PNG transparency in Win IE 5.5 or higher.
+   {
+   for(var i=0; i<document.images.length; i++)
+      {
+	  var img = document.images[i]
+	  var imgName = img.src.toUpperCase()
+	  if (imgName.substring(imgName.length-3, imgName.length) == "PNG")
+	     {
+		 var imgID = (img.id) ? "id='" + img.id + "' " : ""
+		 var imgClass = (img.className) ? "class='" + img.className + "' " : ""
+		 var imgTitle = (img.title) ? "title='" + img.title + "' " : "title='" + img.alt + "' "
+		 var imgStyle = "display:inline-block;" + img.style.cssText
+		 if (img.align == "left") imgStyle = "float:left;" + imgStyle
+		 if (img.align == "right") imgStyle = "float:right;" + imgStyle
+		 if (img.parentElement.href) imgStyle = "cursor:hand;" + imgStyle
+		 var strNewHTML = "<span " + imgID + imgClass + imgTitle
+		 + " style=\"" + "width:" + img.width + "px; height:" + img.height + "px;" + imgStyle + ";"
+	     + "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader"
+		 + "(src=\'" + img.src + "\', sizingMethod='scale');\"></span>"
+		 img.outerHTML = strNewHTML
+		 i = i-1
+	     }
+      }
+   }
+
+YAHOO.util.Event.addListener(window, "load", correctPNG);
+
+</script>
+<![endif]-->
+
+</body>
+</html>
+#end @main[]

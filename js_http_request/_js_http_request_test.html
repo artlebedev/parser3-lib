@@ -1,0 +1,174 @@
+@USE
+JSHttpRequest.p
+
+
+###########################################################################
+# I put methods from Sergey M. in class JSHttpRequest.p and make this file
+# for compare results (for prevent my stupid mistakes while modifications)
+@main[]
+<table border="1">
+<tr>
+	<th>Type</th>
+	<th>Origin methods</th>
+	<th>JSHttpRequest.p</th>
+</tr>
+
+<tr>
+	<td>void</td>
+	<td>^object2js[]</td>
+	<td>^JSHttpRequest:_object2js[]</td>
+</tr>
+
+$s[]
+<tr>
+	<td>empty string</td>
+	<td>^object2js[$s]</td>
+	<td><b>^JSHttpRequest:_object2js[$s]</b></td>
+</tr>
+
+$t[^table::create{a	b}]
+<tr>
+	<td>empty table</td>
+	<td>^object2js[$t]</td>
+	<td>^JSHttpRequest:_object2js[$t]</td>
+</tr>
+
+$h[^hash::create[]]
+<tr>
+	<td>empty hash</td>
+	<td>^object2js[$h]</td>
+	<td>^JSHttpRequest:_object2js[$h]</td>
+</tr>
+
+$b(^math:random(100) > 50)
+<tr>
+	<td>bool</td>
+	<td>^object2js($b)</td>
+	<td>^JSHttpRequest:_object2js($b)</td>
+</tr>
+
+$i(5)
+<tr>
+	<td>int</td>
+	<td>^object2js($i)</td>
+	<td>^JSHttpRequest:_object2js($i)</td>
+</tr>
+
+$d(1.5)
+<tr>
+	<td>double</td>
+	<td>^object2js($d)</td>
+	<td>^JSHttpRequest:_object2js($d)</td>
+</tr>
+
+$s[^math:md5[^math:random(100)]]
+<tr>
+	<td>string</td>
+	<td>^object2js[$s]</td>
+	<td>^JSHttpRequest:_object2js[$s]</td>
+</tr>
+
+$dt[^date::now[]]
+<tr>
+	<td>date</td>
+	<td>^object2js[$dt]</td>
+	<td>^JSHttpRequest:_object2js[$dt]</td>
+</tr>
+
+$t[^table::create{a	b^#0Aa1	b1^#0Aa2	b2}]
+<tr>
+	<td>table</td>
+	<td>^object2js[$t]</td>
+	<td>^JSHttpRequest:_object2js[$t]</td>
+</tr>
+
+$h[
+	$.1(1==1)
+	$.2(1==1)
+]
+<tr>
+	<td>hash of bool</td>
+	<td>^object2js[$h]</td>
+	<td>^JSHttpRequest:_object2js[$h]</td>
+</tr>
+
+$h[
+	$.1(1==1)
+	$.2(1==0)
+]
+<tr>
+	<td>hash of bool</td>
+	<td>^object2js[$h]</td>
+	<td>^JSHttpRequest:_object2js[$h]</td>
+</tr>
+
+$h[
+	$.1[a]
+	$.2[b]
+	$.3[]
+	$.4[$dt]
+]
+<tr>
+	<td>simple hash</td>
+	<td>^object2js[$h]</td>
+	<td><b>^JSHttpRequest:_object2js[$h]</b></td>
+</tr>
+
+$h[
+	$.1[a]
+	$.2[
+		$.3[c]
+		$.4[d]
+	]
+]
+<tr>
+	<td>hash</td>
+	<td>^object2js[$h]</td>
+	<td>^JSHttpRequest:_object2js[$h]</td>
+</tr>
+</table>
+
+
+
+# copy/paste methods by Sergey M. from this location: http://www.parser.ru/forum/?id=41408
+
+###########################################################################
+@object2js[test]
+^if($test is void && ^return[null] ||
+    $test is bool && ($test && ^return[true] || ^return[false]) ||
+    $test is string && ^return['^taint[js][$test]'] ||
+   ($test is int || $test is double) && ^return[$test] ||
+    $test is hash && ($test && ^return[^_hash2js[$test]] || ^return[null]) ||
+    $test is table && ($test && ^return[^_table2js[$test]] || ^return[null]) ||
+    $test is date && ^return[new Date(^test.unix-timestamp[]000)]
+){}{
+	^return[null]
+}
+
+
+###########################################################################
+@return[type]
+$caller.result[$type]
+$result(1)
+
+
+###########################################################################
+@_hash2js[hash]
+# проверяем, а не hash ли это of bool
+^if(^hash.foreach[;v]{^if($v is bool && $v;0;1)}){
+# если не он - возвращаем ассоциативный массив (хеш)
+  $result[^{^hash.foreach[k;v]{'^taint[js][$k]': ^if($v is bool || $v is int || $v is double){^object2js($v)}{^object2js[$v]}}[, ]^}]
+}{
+# если, таки, он - возвращаем нумерованый
+    $result[^[^hash.foreach[key;]{'^taint[js][$key]'}[, ]^]]
+}
+
+###########################################################################
+@_table2js[table][keys]
+$keys[^table.columns[]]
+^if($keys){
+    $result[^[^table.menu{^{^keys.menu{'^taint[js][$keys.column]':'^taint[js][$table.[$keys.column]]'}[, ]^}}[, ]^]]
+}{
+# nameless tables are deprecated!
+    $result[null]
+}

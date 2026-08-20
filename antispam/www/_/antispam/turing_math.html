@@ -1,0 +1,136 @@
+﻿@USE
+AntispamTuringMath.p
+
+
+###########################################################################
+@main[][oAntiSpam;bShowForm]
+<html>
+^rem{ *** с помощью CSS или JS можно не показывать фиктивные submit-ы, раскомментируйте чтобы посмотреть *** }
+#^head[]
+
+<body>
+
+$oAntiSpam[^AntispamTuringMath::create[$hAntiSpamParams]]
+
+$bShowForm(true)
+
+^oAntiSpam.exec{
+	^rem{ *** проверяем все-ли в форме заполнено как надо *** }
+	^check[]
+
+	...тут должен быть ваш код по обработке пришедших от посетителя данных...
+
+	<p>Ваше сообщение было успешно добавлено.</p>
+	$bShowForm(false)
+}{
+	$bShowForm(false)
+	$exception.handled(true)
+
+	^switch[$exception.type]{
+		^case[$oAntiSpam.CLASS_NAME]{
+			^switch[$exception.source]{
+				^case[unknown-uid]{
+					<p>Ваше сообщение уже было добавлено <b>ранее</b>.</p>
+				}
+
+				^case[empty-uid]{
+					^rem{ *** post данных, в которых напрочь отсутствует uid - вероятно спамер *** }
+					^bye[]
+				}
+
+				^case[fake-uid-exist]{
+					^rem{ *** post данных, в которых есть запрещенные uid - точно спамер *** }
+					^bye[]
+				}
+
+				^case[no-real-uid]{
+					^rem{ *** post данных, в которых нет требуемого валидного uid - точно спамер *** }
+					^bye[]
+				}
+
+				^case[referer]{
+					^rem{ *** post данных с неизвестного referer-а - точно спамер *** }
+					^bye[]
+				}
+
+				^case[suspected-content]{
+					^rem{ *** при submit-е данных с помощью заданного фильтра обнаружили подозрительные данные - вероятно спамер *** }
+					^bye[]
+				}
+
+				^case[turing.empty]{
+					<p>Для добавления сообщения Вам обязательно нужно доказать, что вы не примитивный робот, решив арифметическую задачку.</p>
+					$bShowForm(true)
+				}
+
+				^case[turing.failed]{
+					<p>Вы неверно решили предложенную арифметическую задачку. Попробуйте ещё раз.</p>
+					$bShowForm(true)
+				}
+			}
+		}
+
+		^case[check.fields]{
+			<p>Не заполнены обязательные поля формы.</p>
+			$bShowForm(true)
+		}
+
+		^case[DEFAULT]{
+			$exception.handled(false)
+		}
+	}
+}
+
+
+^if($bShowForm){
+
+	^oAntiSpam.print{
+		^rem{ *** xhtml формы. никаких дополнительных полей руками добавлять не нужно. *** }
+		<form method="post">
+			<i>* Имя:</i><br />
+			<input type="text" name="name" value="$form:name" /><br />
+
+			<i>E-mail:</i><br />
+			<input type="text" name="email" value="$form:email" /><br />
+
+			<i>Сообщение:</i><br />
+			<textarea name="text" cols="60" rows="10">$form:text</textarea><br />
+
+			<i>* <b>^oAntiSpam.getTuringTest[] = ?</b></i><br />
+			<input type="text" name="result" value="" /><br />
+
+			^rem{ *** ВНИМАНИЕ! Класс меняет содержимое атрибута 'name', *** }
+			^rem{ *** поэтому вы не должны привязываться к нему в CSS/XSL и анализировать его после POST формы. *** }
+			^rem{ *** Анализируйте $form:uid например *** }
+			<input type="submit" name="action" value="Отправить" class="class" />
+		</form>
+
+		<p style="color:gray^; font-size: smaller^;">
+			P.S. Не забудьте посмотреть результирующий html (View Source) и обратить внимание на автоматически
+			добавленный в форму элемент ^taint[<input type="hidden" name="uid" value="..."/>], а также на то, 
+			что у реального и фиктивных элементов ^taint[<input type="submit"/>] были произведены 
+			изменения атрибутов (в том числе @name).
+		</p>
+	}{
+		^switch[$exception.type]{
+			^case[$oAntiSpam.CLASS_NAME]{
+				$exception.handled(true)
+				^switch[$exception.source]{
+					^case[referer]{
+						^rem{ *** открытие формы с неизвестного referer-а *** }
+						^bye[]
+					}
+
+					^case[unknown-fields]{
+						^rem{ *** в form пришли неизвестные поля *** }
+						^bye[]
+					}
+				}
+			}
+		}
+	}
+
+}
+</body>
+</html>
+#end @main[]

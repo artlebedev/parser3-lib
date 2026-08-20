@@ -1,0 +1,86 @@
+img { padding: 0; margin: 0; border: 0; }
+html, body {
+	padding: 0px;
+	margin: 0px;
+    background-color: #eeeeee;
+}
+
+.dragPanel { 
+    position: relative;
+    margin: 0px;
+    background-color: #eeeeee;
+    /*
+    top: 10px;
+    left: 20px;
+    */
+    width: 260px;
+    height: 180px;
+}
+
+/* picker */
+
+#hueThumb { 
+    cursor:default;
+    width:18px; 
+    height:18px; 
+    z-index: 9;
+    position:absolute; 
+}
+
+#hueBg {
+    position:absolute; 
+    left:226px; 
+    height:198px; 
+    width:18px; 
+    top:18px;
+}
+
+#pickerDiv {
+    position:absolute; 
+    left:20px; 
+    height:187px; 
+    width:188px; 
+    top:20px;
+}
+
+#selector { 
+    cursor:default;
+    width:11px; 
+    height:11px; 
+    z-index: 9;
+    position:absolute; 
+    top:0px;
+    left:0px;
+}
+
+#pickerSwatch {
+    position:absolute; 
+    left:24px; 
+    top:212px;
+    height:20px; 
+    width:180px; 
+    border:2px solid #bbbbbb;
+}
+
+#pickerPanel {
+	width: 265px;
+	height: 280px;
+	border: 1px solid #eeeeee;
+}
+
+#Buttons {
+	border: 0px;
+	margin: 0px;
+    position: absolute; 
+    left: 24; 
+    top: 238;
+    width: 184px;
+}
+
+#Buttons TD {
+	padding: 0px;
+}
+
+#Buttons Input {
+    font-size: 70%;
+}

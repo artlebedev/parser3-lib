@@ -1,0 +1,122 @@
+body
+{
+	background-color: white;
+	font-family: Tahoma, Sans-serif;
+	font-size: 0.8em;
+	margin: 0px;
+	padding: 0px;
+}
+
+#ChatMessagesContainer
+{
+	position: absolute;
+	width: 100%;
+	left: 0em;
+}
+
+
+#ChatMessages
+{
+	margin: 1em;
+	margin-right: 15em;
+	border: 1px solid gray;
+	padding: 0.5em;
+	height: 38em;
+	overflow: auto;
+}
+
+
+#ChatVisitorsContainer
+{
+	position: absolute;
+	right: 0em;
+	width: 15em;
+}
+
+
+#ChatVisitors
+{
+	border: 1px solid gray;
+	margin: 1em;
+	padding: 0.5em;
+	height: 38em;
+}
+
+
+#ChatInputContainer
+{
+	position: absolute;
+	left: 0em;
+	bottom: 0em;
+}
+
+
+#ChatInput
+{
+	margin: 1em;
+}
+
+#ChatRecipient
+{
+	background-color: #cccccc;
+	width: 10em;
+}
+
+#ChatInputLine
+{
+	width: 45em;
+}
+
+
+#ChatSendButton
+{
+}
+
+#ChatColor
+{
+	width: 5em;
+	font-weight: bold;
+	border:1px solid gray;
+	margin: 0px;
+	padding: 2px 5px;
+	cursor: pointer;
+}
+
+DIV.ChatVisitor SPAN
+{
+}
+
+
+DIV.ChatVisitor SPAN.Name
+{
+	cursor: pointer;
+	margin-left: 0.3em;
+}
+
+
+DIV.ChatVisitor SPAN.Current
+{
+	font-weight: bold;
+	cursor: default;
+}
+
+
+DIV.ChatMessage SPAN.Time
+{
+	color: blue;
+}
+
+
+DIV.ChatMessage SPAN.Author
+{
+	font-weight: bold;
+	margin-left: 0.5em;
+	cursor: pointer;
+}
+
+
+DIV.ChatMessage SPAN.Text
+{
+	margin-left: 0.5em;
+}
+

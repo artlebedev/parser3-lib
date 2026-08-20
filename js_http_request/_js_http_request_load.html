@@ -1,0 +1,59 @@
+
+@main[]
+^use[^file:find[JSHttpRequest.p]{JSHttpRequest.p}]
+^try{
+#	декодируем пришедшие данные. результат получаем в виде хеша
+	$hRequest[^JSHttpRequest:decodeRequest[]]
+	
+	^if($hRequest.q eq "error"){^callUndefinedFunction[]}
+
+#	делаем то, что требуется, в данном примере просто вычисляем md5 от пришедшей строки (в q=xyz)
+	$hParserVariable[
+	   $.q[$hRequest.q]
+	   $.md5[^math:md5[$hRequest.q]]
+	   $.hello[]
+	]
+	$sDebugMessage[
+		<pre>
+  <b>QUERY_STRING:</b> $request:query 
+  <b>Request method:</b> $env:REQUEST_METHOD 
+  <b>Content-Type:</b> $env:CONTENT_TYPE 
+  <b>Loader used:</b> ^JSHttpRequest:getLoader[]
+   ^printFormContent[$hRequest]
+		</pre>
+	]
+}{
+	$exception.handled(true)
+	$sDebugMessage[^unhandled_exception[$exception]]
+	$sDebugMessage[^sDebugMessage.match[<body>(.+?)</body>][]{^if(def $match.1){$match.1}{$sDebugMessage}}]
+}
+
+# возвращаем результаты в виде JavaScript. 
+# как вы видите классу можно скармливать прямо парсерные переменные (bool/int/double/string/table/hash/date)
+^JSHttpRequest:printResponse[$sDebugMessage;$hParserVariable]
+
+# если вы раскомментируете последующую строчку то информация обо всех приходящих запросах будет
+# записываться в log файл
+^printDebugInfo[$hRequest]
+#end @main[]
+
+
+
+###########################################################################
+@printDebugInfo[hRequest][sFields;sKey;sValue;bFile;dtNow;sDebugInfo]
+$sFields[^hRequest.foreach[sKey;sValue]{$sKey=^if($sValue is "file"){-file-$bFile(1)}{$sValue}}[&]]
+	
+$dtNow[^date::now[]]
+$sDebugInfo[^dtNow.sql-string[]	$env:REQUEST_METHOD	$request:query	^if($bFile){-file-}{$request:body}	^JSHttpRequest:getId[]	$sFields^#0A]
+^sDebugInfo.save[append;JSHttpRequest.log]
+#end @printDebugInfo[]
+
+
+###########################################################################
+# 
+@printFormContent[hRequestData]
+^hRequestData.foreach[field;value]{ 
+   ${field}: ^if($value is "file"){[file] name: $value.name, size: $value.size ^rem{, content-type: $value.content-type}}{$value} 
+}[<br>]
+
+#end @printFormContent[]

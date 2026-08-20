@@ -1,0 +1,10 @@
+﻿@USE
+AntispamTuringCaptcha.p
+
+
+###########################################################################
+@main[]
+$oAntiSpam[^AntispamTuringCaptcha::create[$hAntiSpamParams]]
+
+$response:body[^oAntiSpam.generateImage[]]
+#end @main[]

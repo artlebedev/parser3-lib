@@ -1,0 +1,56 @@
+# ВНИМАНИЕ! НЕ ЗАБУДЬТЕ УДАЛИТЬ ЭТОТ ФАЙЛ С РАБОЧЕГО САЙТА!
+
+@main[]
+^rem{ *** устанавливаем соединение с sql сервером *** }
+^oSql.server{
+	^rem{ *** создаем объект класса auth. на этой странице мы не передаем классу $form:fields сл-но. тут логин/logout произойти не может *** }
+	$auth[^auth::init[$cookie:CLASS;;$.csql[$oSql]]]
+
+	^rem{ *** выдаем антикеширующие заголовки *** }
+	^auth.setExpireHeaders[]
+
+	&lt^;&lt^; <a href="./_auth_info.html">Информация о сессии</a>
+
+	<h2>^if($auth.is_logon){Изменение параметров}{Регистрация}</h2>
+	$is_show_form(1)
+	
+	^if(def $form:do){
+		^if($auth.is_logon){
+			^try{
+				^rem{ *** сохраняем параметры существующего пользователя *** }
+				^auth.updateUser[$form:fields]
+				<p>Параметры пользователя сохранены.</p>
+				$is_show_form(0)
+			}{
+				$exception.handled(1)
+				$errors[^auth.decodeError[]]
+				<p>При сохранении новых параметров пользователя возникли следующие проблемы: ^errors.menu{$errors.name}[, ].</p>
+			}
+		}{
+			^try{
+				^rem{ *** регистрация нового пользователя *** }
+				^auth.insertUser[$form:fields]
+
+				^rem{ *** если регистрация прошла успешно - логиним пользователя *** }
+				^auth.logon[
+					$form:fields
+					$.[auth.logon][do]
+				]
+				<p>Пользователь успешно зарегистрирован.</p>
+				$is_show_form(0)
+			}{
+				$exception.handled(1)
+				$errors[^auth.decodeError[]]
+				<p>При регистрации нового пользователя возникли следующие проблемы: ^errors.menu{$errors.name}[, ].</p>
+			}
+		}
+	}
+
+	^if($is_show_form){
+		^rem{ *** если надо показываем форму регистрации/изменения параметров *** }
+		^auth.htmlFormProfile[
+			$.fields[$form:fields]
+			$.target_url[./_auth_profile.html]
+		]
+	}
+}

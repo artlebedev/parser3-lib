@@ -1,0 +1,270 @@
+@USE
+JSHttpRequest.p
+MySqlComp.p
+auth/auth.p
+
+
+###########################################################################
+@main[]
+# user go to inactive status after, secs
+$iUserActivityDelay(60)
+
+# delete messages older then, days
+$iMessageLifeTime(1)
+
+$oSql[^MySqlComp::create[$SQL.connect-string;$.bDebug(1)]]
+^JSHttpRequest:init[
+	$.bAllowUnicodeChars(1)
+#	$.bOldStyle(1)
+#	$.sJsClassName[Subsys_JsHttpRequest_Js]
+]
+
+^oSql.server{
+
+	$oAuth[^auth::init[$cookie:CLASS;$form:fields;
+		$.csql[$oSql]
+		$.event_min_count(10)
+	]]
+
+	^if($oAuth.is_logon){
+		^rem{ *** decode input data *** }
+		$hRequest[^JSHttpRequest:decodeRequest[]]
+		
+		^rem{ *** set vars from decoded data *** }
+		$sRecipient[$hRequest.recipient]
+		$sMessage[^trim[$hRequest.text]]
+		$sColor[$hRequest.color]
+		$iMessageId(^hRequest.last.int(0))
+
+		^if(def $sColor && $sColor ne $cookie:color){
+			$cookie:color[$sColor]
+		}
+
+		$iCurrentUserId($oAuth.user.user_id)
+		$iToUserId(0)
+
+		^rem{ *** update current user activity *** }
+		^updateActivity[
+			$.iCurrentUserId($iCurrentUserId)
+			$.iOperation(^if(def $sMessage){1}{0})
+		]
+		
+		^rem{ *** get active users *** }
+		$tVisitor[^oSql.table{
+			SELECT
+				chat_activity.auser_id AS id,
+				chat_activity.user_agent,
+				auser.name
+			FROM
+				chat_activity
+				INNER JOIN auser ON (chat_activity.auser_id = auser.auser_id)
+			GROUP BY
+				chat_activity.auser_id
+		}]
+		^if($tVisitor){
+			^tVisitor.sort{$tVisitor.name}
+		}
+
+		^if(def $sRecipient){
+			^if(^tVisitor.locate[name;$sRecipient]){
+				$iToUserId($tVisitor.id)
+			}{
+				^rem{ *** no recipient with this name in chat now so we'll try find him in table 'auser' *** }
+				$iToUserId(^oSql.int{
+					SELECT
+						auser_id
+					FROM
+						auser
+					WHERE
+						name = '$sRecipient'
+				}[
+					$.default(0)
+				])
+
+				^if(!$iToUserId){
+					$sMessage[]
+				}
+			}
+		}
+		
+		^if(def $sMessage){
+			^clearOldMessages[]
+
+			^insertMessage[
+				$.iCurrentUserId($iCurrentUserId)
+				$.iToUserId($iToUserId)
+				$.sMessage[$sMessage]
+				$.sColor[$sColor]
+			]
+		}
+		
+		^rem{ *** select last public or our private messages *** }
+		$tMessage[^oSql.table{
+			SELECT
+				chat_message_id AS id,
+				auser_id AS from_id,
+				to_id,
+				param AS color,
+				UNIX_TIMESTAMP(dt) AS dt,
+				body AS message
+			FROM
+				chat_message
+			WHERE
+				(
+					to_id IN (0, $iCurrentUserId)
+					OR auser_id = $iCurrentUserId
+				)
+				^if($iMessageId){
+					AND chat_message_id > $iMessageId
+				}
+			ORDER BY
+				dt DESC
+		}[
+			$.limit($iChatMessageLimit)
+		]]
+
+		^rem{ *** get authors of these messages *** }
+		^if($tMessage){
+			$tMessage[^table::create[$tMessage][$.reverse(1)]]
+			$tAuthor[^oSql.table{
+				SELECT
+					auser_id AS id,
+					name
+				FROM
+					auser
+				WHERE
+					auser_id IN (^tMessage.menu{$tMessage.from_id, $tMessage.to_id}[,])
+			}]
+		}{
+			$tAuthor[^table::create{id	name}]
+		}
+
+#		^printDebugInfo[$hRequest]
+	}{
+		$iCurrentUserId(0)
+
+		$dtNow[^date::now[]]
+
+		$tMessage[^table::create{id	from_id	to_id	color	dt	message}]
+		^tMessage.append{0	0	0	#000000	^dtNow.unix-timestamp[]	Error 403. Auth required.}
+
+		$tAuthor[^table::create{id	name}]
+		^tAuthor.append{0	SERVER}
+		
+		$tVisitor[^table::create{id	user_agent	name}]
+	}
+
+	^JSHttpRequest:printResponse[;
+		$.visitors[$tVisitor]
+		$.current[
+			$.user_id($iCurrentUserId)
+		]
+		$.messages[$tMessage]
+		$.authors[$tAuthor]
+	]
+}
+#end @main[]
+
+
+
+###########################################################################
+# write to log file debug info
+@printDebugInfo[hRequest][sFields;sKey;sValue;dtNow;sDebugInfo]
+$sFields[^hRequest.foreach[sKey;sValue]{$sKey=$sValue}[&]]
+	
+$dtNow[^date::now[]]
+$sDebugInfo[^dtNow.sql-string[]	$env:REQUEST_METHOD	$request:query	$request:body	^JSHttpRequest:getId[]	$sFields	message: $iMessageId^#0A]
+^sDebugInfo.save[append;Chat.log]
+#end @printDebugInfo[]
+
+
+
+###########################################################################
+@updateActivity[hParam]
+^clearUserActivities[]
+
+^oSql.void{
+	DELETE FROM
+		chat_activity
+	WHERE
+		auser_id = $hParam.iCurrentUserId
+}
+
+^oSql.void{INSERT INTO chat_activity (
+	auser_id,
+	operation,
+	user_agent,
+	dt
+) VALUES (
+	$hParam.iCurrentUserId,
+	$hParam.iOperation,
+	'$env:HTTP_USER_AGENT',
+	^oSql.now[]
+)}
+$result[]
+#end @updateActivity[]
+
+
+
+###########################################################################
+@clearUserActivities[hParam][dtEdge]
+$dtEdge[^date::now(-$iUserActivityDelay/24/60/60)]
+^oSql.void{
+	DELETE FROM
+		chat_activity
+	WHERE
+		dt < '^dtEdge.sql-string[]'
+}
+$result[]
+#end @clearUserActivities[]
+
+
+
+###########################################################################
+@insertMessage[hParam]
+^oSql.void{INSERT INTO chat_message (
+	chat_id,
+	dt,
+	auser_id,
+	to_id,
+	param,
+	body
+) VALUES (
+	1,
+	^oSql.now[],
+	$hParam.iCurrentUserId,
+	$hParam.iToUserId,
+	'$hParam.sColor',
+	'$hParam.sMessage'
+)}
+$result[]
+#end @insertMessage[]
+
+
+
+###########################################################################
+@clearOldMessages[][dtEdge;tLastMessage]
+$dtEdge[^date::now(-$iMessageLifeTime)]
+$tLastMessage[^oSql.table{
+	SELECT
+		chat_message_id AS id
+	FROM
+		chat_message
+	WHERE
+		to_id = 0
+	ORDER BY
+		dt DESC
+}[
+	$.limit($iChatMessageLimit)
+]]
+^oSql.void{
+	DELETE FROM
+		chat_message
+	WHERE
+		dt < '^dtEdge.sql-string[]'
+		^if($tLastMessage){
+			AND chat_message_id NOT IN (^tLastMessage.menu{$tLastMessage.id}[,])
+		}
+}
+$result[]
+#end @clearOldMessages[]

@@ -1,0 +1,37 @@
+###########################################################################
+@main[]
+<html>
+<head>
+	<link rel="stylesheet" href="$sCssPath/chat.css"></link>
+	<script language="JavaScript" src="$sScriptPath/JsHttpRequest/JsHttpRequest.js"></script>
+	<script type="text/javascript" src="$sScriptPath/global.js"></script>
+	<script type="text/javascript" src="$sScriptPath/chat.js"></script>
+</head>
+
+<body>
+	<div id="ChatMessagesContainer">
+		<div id="ChatMessages"></div>
+	</div>
+
+	<div id="ChatVisitorsContainer">
+		<div id="ChatVisitors"></div>
+	</div>
+	
+	<div id="ChatInputContainer">
+		<form id="ChatInput" method="post" enctype="multipart/form-data" action="./" onsubmit="return false">
+			<input id="ChatRecipient" type="text" name="recipient" value="" readonly="true" onclick="chatClearRecipient()" title="Recipient. Click here to clear it."
+			/><input id="ChatInputLine" type="text" name="message" value="" maxsize="200" onkeydown="if(event.keyCode == 13){chatDoSendMessage()}" />
+			<input id="ChatSendButton" type="button" name="action" value="Send" onclick="chatDoSendMessage()" />
+
+			<span id="ChatColor" onclick="Page.ShowModal('./color_picker.html', 285, 300); return false;"" title="Messages color. Click here to change it.">Color</span>
+		</form>
+	</div>
+	
+	<script language="javascript"><!--
+		chatInit('./load.html', $iChatMessageLimit);
+		chatSetColor('$cookie:color');
+	//-->
+	</script>
+</body>
+</html>
+#end @main[]

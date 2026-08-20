@@ -1,0 +1,103 @@
+@main[]
+$xdoc[^xdoc::create{<?xml version="1.0"?>
+<a>
+	<b b1="vb1" b2="vb2">
+		<c c1="vc1" c2="vc2" c3="C&amp^;C" />
+		<d>1 &lt^; 2</d>
+	</b>
+
+</a>}]
+
+$h[
+	$.string[text text text]
+	$.string_w_tags[text text <text>]
+
+	$.double(1.2)
+	$.int(1)
+	$.void[]
+
+	$.true(true)
+	$.false(false)
+
+	$.date[^date::create(2012;01;02;12;34;56)]
+
+	$.hash-empty[^hash::create[]]
+	$.hash[
+		$.a[1]
+		$.b[
+			$.c[3]
+		]
+		$.foreach[4]
+	]
+
+	$.table-empty[^table::create{a	b	c}]
+	$.table[^table::create{a	b	c^#0A	b1^#0Aa2	b2	c2	d2}]
+#	$.table-wo-columns[^table::create{$empty-var^#0Aa	b	c^#0Aa2	b2	c2}]	^rem{ *** not yet *** }
+
+	$.table-nameless-empty[^table::create[nameless]{}]
+	$.table-nameless[^table::create[nameless]{a1	b1^#0Aa2	b2	c2	d2}]
+
+	$.junction-method[$main]
+
+	$.regex[^regex::create[^^(.+)^$]]
+
+	$.class1[$DEMO:CLASS]
+	$.object1[^DEMO::create[]]
+
+	$.class2[$DEMO2:CLASS]
+	$.object2[^DEMO2::create[]]
+
+	$.xdoc[$xdoc]
+	$.xnode[$xdoc.documentElement]
+
+	$f[^file::load[text;./auto.p]]
+	$.file-text[$f]
+	$.file-text2[$f]
+	$.file-binary[^file::load[binary;./auto.p]]
+	$.file-stat[^file::stat[./auto.p]]
+	$.file-create[^file::create[file content;$.mode[text]]]
+	^try{
+		$.file-http[^file::load[text;http://www.parser.ru/forum/]]
+	}{
+		$exception.handled(true)
+	}
+
+	$.image[^image::create(100;100)]
+	^try{
+		$.image-measure[^image::measure[./20121107_104218.jpg]]
+	}{
+		$exception.handled(true)
+	}
+	
+]
+$h.hash.recursion[$h]
+
+^dstop[$h]
+
+
+
+@CLASS
+DEMO
+
+@auto[]
+$demo_static[demo_static_value]
+
+@create[a;b;c]
+$demo_dynamic[demo_dynamic_value]
+
+
+@CLASS
+DEMO2
+
+@BASE
+DEMO
+
+@auto[]
+$demo2_static[demo2_static_value]
+
+@create[a2;b2;c2]
+^BASE:create[$a2;$b2;$c2]
+^m[]
+
+@m[]
+$demo2_dynamic[demo2_dynamic_value]

@@ -1,0 +1,10 @@
+<IfModule mod_autoindex.c>
+	Options Indexes FollowSymLinks MultiViews
+	IndexOptions FoldersFirst FancyIndexing VersionSort IconsAreLinks IgnoreCase XHTML
+	#HTMLTable
+</IfModule>
+
+<Files ~ "\.(p|ion)$">
+	Order allow,deny
+	Deny from all
+</Files>

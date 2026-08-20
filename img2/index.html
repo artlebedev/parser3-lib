@@ -1,0 +1,114 @@
+<!-- (C) Copyright by Eugene Spearance -->
+<html>
+<head>
+<title>Test image resize</title>
+<META NAME="Keywords" CONTENT="resize, picture, images, Parser, Perl, previe, превью, изменение размера, картинки, фотографии">
+<meta name="Description" content="Изменение размера картинок и создание превью, Parser+Perl (Resize images and make preview.)">
+<LINK REL="STYLESHEET" HREF="/parser3/index.css" TYPE="text/css">
+</head>
+<body>
+<table>
+<tr>
+<td valign="bottom">
+<table style="width: auto">
+<tr>
+<td width="200" height="22" style="font: 10pt Tahoma, sans-serif; padding: 0px 0px 5px 5px" nowrap="nowrap"><a href="/parser3/pictures/">вернуться к примеру</a></td>
+</tr>
+</table>
+</td>
+<td align="right" style="font: 18pt Tahoma, sans-serif; padding: 0px 15px 5px 0px">Изменение размера картинок</td>
+</tr>
+<tr>
+<td height="1" bgcolor="#999999" colspan="2" nowrap="nowrap"></td>
+</tr>
+<tr>
+<td height="22" colspan="2" align="right" nowrap="nowrap">
+<table style="width: auto">
+<tr>
+<td width="200" height="22" align="center" style="background: #EEEEEE; font: 10pt Tahoma, sans-serif" nowrap="nowrap"><a href="/parser3/">лаборатория тестов</a></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<p>Я&nbsp;долго бился, как наверно и&nbsp;многие, над тем, чтобы научиться делать превью (маленькие изображения) для картинок. Ведь это&nbsp;бы дало возможность создавать с&nbsp;помощью Parser фото галереи, размещать картинки в&nbsp;новостях <nobr>и т.д.</nobr> Мне нужен был универсальный инструмент, который&nbsp;бы не&nbsp;цеплялся к&nbsp;формату файла (jpg, gif, png), умел производить различные манипуляции с&nbsp;изображениями и&nbsp;был способен выдавать адекватный, предсказуемый результат.</p>
+<p>Такой инструмент называется ImageMagick, одна из&nbsp;самых мощных библиотек работы с&nbsp;графикой. В&nbsp;купе с&nbsp;Perl он&nbsp;даёт именно то,&nbsp;что нужно. Тут я&nbsp;немного приторможу на&nbsp;вопросе логичности использования Perl, так как вопрос этот не&nbsp;раз звучал в&nbsp;форуме. На&nbsp;моем хостинге нет возможности использовать готовые программы (convert, composite <nobr>и т.д.</nobr>), входящие в&nbsp;пакет ImageMagick, только именно поэтому приходится использовать Perl. Если вы&nbsp;обладаете такой возможностью, так вам и&nbsp;надо.</p>
+<p>Не&nbsp;так давно обратил внимание на&nbsp;утилиту nconvert, которая входит в&nbsp;комплект <a href="http://www.xnview.com">xnview</a>&nbsp;&mdash; просмотрщика картинок. Эта утилита также позволяет производить различные преобразования файлов, однако менее требовательна к&nbsp;установке&nbsp;и&nbsp;настройке. Об установке и свойствах утилиты можно прочитать <a href="http://www.parser.ru/forum/?id=43100">здесь</a>.</p>
+<p>Используя вышеозначенные продукты, я&nbsp;написал небольшой класс для работы с&nbsp;изображениями.</p>
+<p>Основные методы:</p>
+<p><b>^images:save[image_file;destination_path;image_name;remove_meta;format]</b></p>
+<ul>
+<li><b>$image_file</b>&nbsp;&mdash; значение, полученное из&nbsp;формы, с&nbsp;атрибутом type=&laquo;file&raquo;, или объект класса file.</li>
+<li><b>$destination_path</b>&nbsp;&mdash; путь, по&nbsp;которому будет сохранено изображение.</li>
+<li><b>$image_name</b>&nbsp;&mdash; новое имя файла без расширения. В&nbsp;случае отсутствия этого параметра, файл будет сохранен с&nbsp;текущим именем.</li>
+<li><b>$remove_meta</b>&nbsp;&mdash; значения 1/0. Удаляет мета-данные EXIF, IPTC и т.д. (при удалении происходит перекомпрессия файла 80%). Для этой функции необходим nConvert.
+<li><b>$format</b>&nbsp;&mdash; формат файла в&nbsp;который нужно сохранить изображение [gif|jpg|jpeg|jpe|png].</li>
+</ul>
+<p>Сохраняет картинку в&nbsp;каталог <code>$destinamtion_path</code> с&nbsp;именем <code>$image_name</code> в&nbsp;формате <code>$format</code>, попутно проверяя является&nbsp;ли картинка валидным файлом. Если не&nbsp;задан путь, картинка сохраняется в&nbsp;корневом каталоге (/). Если не&nbsp;указано имя файла или формат, картинка сохраняется с&nbsp;текущими значениями.</p>
+<p><b>^images:resize[params]</b></p>
+<ul>
+<li><b>$.source_path</b>&nbsp;&mdash; путь, где лежит большое изображение.</li>
+<li><b>$.destination_path</b>&nbsp;&mdash; путь, по&nbsp;которому будет сохранено уменьшенное (preview) изображение. В&nbsp;случае отсутствия этого параметра, уменьшенное изображение перезапишется вместо исходного.</li>
+<li><b>$.image_name</b>&nbsp;&mdash; имя исходного файла.</li>
+<li><b>$.x_size</b>&nbsp;&mdash; ширина, до&nbsp;которой нужно уменьшить исходное изображение.</li>
+<li><b>$.y_size</b>&nbsp;&mdash; высота, до&nbsp;которой нужно уменьшить исходное изображение.</li>
+<li><b>$.quality</b>&nbsp;&mdash; качество сжатия jpg и&nbsp;png файлов в&nbsp;процентах от&nbsp;1&nbsp;до&nbsp;100.</li>
+</ul>
+<p>Изменяет размер исходной картинки по&nbsp;ширине и&nbsp;высоте, и&nbsp;сохраняет в&nbsp;текущем формате. Если задан только один линейный размер, второй подгоняется пропорционально. Результат сохраняется в&nbsp;каталог <code>$destination_path</code> с&nbsp;именем <code>$image_name</code>. Если не&nbsp;указан путь <code>$source_path</code>, картинка берётся из&nbsp;корневого каталога (/). Если не&nbsp;указан путь <code>$destination_path</code>, картинка сохраняется в&nbsp;<code>$source_path</code>. Можно осуществлять как уменьшение, так и&nbsp;увеличение картинки.</p>
+<p><b>Пример использования:</b></p>
+<p>Задача: сохранить большую картинку 12345.gif (500&times;500 px,&nbsp;в&nbsp;формат jpg, с&nbsp;качеством сжатия 80%, с&nbsp;именем файла 54321.jpg) в&nbsp;папку /big/, а&nbsp;маленькую картинку (100&times;120 px) в&nbsp;папку /small/.</p>
+<pre><font color="#990000">@USE</font>
+images.p
+
+...
+
+<font color="#336699">$source_path</font><font color="#0000AA">[</font>/big/<font color="#0000AA">]</font>
+<font color="#336699">$destination_path</font><font color="#0000AA">[</font>/small/<font color="#0000AA">]</font>
+<font color="#336699">$extension</font><font color="#0000AA">[</font><font color="#AA0000">^file:justext</font><font color="#0000AA">[</font><font color="#336699">$form:pict.name</font><font color="#0000AA">]]</font>
+<font color="#336699">$image_name</font><font color="#0000AA">[</font>54321.<font color="#336699">$extension</font><font color="#0000AA">]</font>
+<font color="#336699">$format</font><font color="#0000AA">[</font>jpg<font color="#0000AA">]</font>
+<font color="#0000AA">^if</font><font color="#0000AA">(</font>!<font color="#AA0000">^images:save</font><font color="#0000AA">[</font><font color="#336699">$form:picture</font>;<font color="#336699">$source_path</font>;<font color="#336699">$image_name</font>;0;<font color="#336699">$format</font><font color="#0000AA">]){</font>
+	<font color="#0000AA">^if</font><font color="#0000AA">(</font><font color="#AA0000">^extension.lower</font><font color="#0000AA">[]</font> ne <font color="#AA0000">^format.lower</font><font color="#0000AA">[]){</font>
+		<font color="#336699">$image_name</font><font color="#0000AA">[</font><font color="#336699">$<font color="#0000AA">{</font>image_name<font color="#0000AA">}</font></font>.<font color="#336699">$format</font><font color="#0000AA">]</font>
+	<font color="#0000AA">}</font>
+	<font color="#336699">$status</font><font color="#0000AA">[</font><font color="#AA0000">^images:resize</font><font color="#0000AA">[</font>
+		<font color="#336699">$.source_path</font><font color="#0000AA">[</font><font color="#336699">$source_path</font><font color="#0000AA">]</font>
+		<font color="#336699">$.destination_path</font><font color="#0000AA">[</font><font color="#336699">$destination_path</font><font color="#0000AA">]</font>
+		<font color="#336699">$.image_name</font><font color="#0000AA">[</font><font color="#336699">$image_name</font><font color="#0000AA">]</font>
+		<font color="#336699">$.x_size</font><font color="#0000AA">(</font>100<font color="#0000AA">)</font>
+		<font color="#336699">$.y_size</font><font color="#0000AA">(</font>120<font color="#0000AA">)</font>
+		<font color="#336699">$.quality</font><font color="#0000AA">[</font>80<font color="#0000AA">]</font>
+	<font color="#0000AA">]]</font>
+	<font color="#0000AA">^if</font><font color="#0000AA">(</font>!<font color="#336699">$status</font><font color="#0000AA">){</font>
+		<font color="#888888"><i>^rem{ *** Всё ок *** }</i></font>
+	<font color="#0000AA">}{</font>
+		<font color="#888888"><i>^rem{ *** Возникла ошибка *** }</i></font>
+		<font color="#336699">$status</font>
+	<font color="#0000AA">}</font>
+<font color="#0000AA">}</font></pre>
+<p><b>Часто возникающие ошибки</b></p>
+<ol>
+<li>Если вы&nbsp;хотите воспользоваться примером, проверьте, установлен&nbsp;ли Perl на&nbsp;вашем хостинге или локальной машине, так&nbsp;же проверьте наличие библиотеки ImageMagick без которой пример работать не&nbsp;будет.</li>
+<li>В&nbsp;случае если у&nbsp;вас Perl находится в&nbsp;папке отличной от&nbsp;<code>#!/usr/bin/perl</code>, не&nbsp;забудьте исправить этот путь.</li>
+<li>Если вы&nbsp;его исправили, не&nbsp;забудьте избавиться в&nbsp;<nobr>Perl-скриптах</nobr> от&nbsp;виндовых переводов строк.</li>
+<li>Правильно указывайте пути к&nbsp;файлу скрипта, в&nbsp;моем случае путь выглядит так <code><nobr>/../cgi-bin</nobr></code>, в&nbsp;вашем случае может быть что угодно.</li>
+<li>Не&nbsp;забудьте назначить для *.pl&nbsp;скриптов права на&nbsp;запуск.</li>
+<li>Проверяйте наличие <code><nobr>enctype="multipart/form-data"</nobr></code>, без этого атрибута вы&nbsp;не&nbsp;сможете передать файлы через форму, и&nbsp;не&nbsp;забывайте в&nbsp;качестве метода передачи данных использовать POST.</li>
+<li>Указывайте в&nbsp;теге <code>&lt;form&gt;</code> атрибут <code><nobr>action="путь_к_файлу"</nobr></code>. В&nbsp;IIS его отсутствие может привести к&nbsp;ошибке (комментарий Misha v.3).</li>
+</ol>
+<table style="width: auto">
+<tr>
+<td rowspan="2"><img src="/parser3/icons/i_zip.gif" width="32" height="32"></td>
+<td style="padding-left: 7px"><a href="/parser3/pictures/archive/images.zip">images.zip</a> <span class="down_info">(29 января 2011&nbsp;г., 2.9 Кб)</span></td>
+</tr>
+<tr><td style="padding-left: 7px"><p class="down_info"><b>класс images.p</b></p></td></tr></table>
+<table style="margin: 40px 0px 20px 0px"><tr><td height="1" bgcolor="#999999" nowrap="nowrap"></td></tr></table>
+<table style="margin-bottom: 20px">
+<tr>
+<td valign="top" class="down_info">Powered by <a href="http://www.parser.ru">Parser 3</a></td>
+<td align="center"><script language="JavaScript" src="http://vbn.vsluh.ru/cgi-bin/hints.cgi?vbn&spearance"></script></td>
+<td align="right" valign="top" class="down_info"><a href="http://www.spearance.ru">Eugene Spearance</a></td>
+</tr>
+</table>
+</body>
+</html>

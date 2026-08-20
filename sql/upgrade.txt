@@ -1,0 +1,92 @@
+@USE
+...
+# comment old class in @USE
+#mysql.p
+...
+
+
+
+@auto[]
+
+...
+
+# Add variable $bNewSql which you will use for switching between old/new classes.
+# You'll change it to $bNewSql(1) later when you add all modifications and
+# check site functionality with using old classes.
+$bNewSql(0)
+
+# modify code which create sql object.
+^if($bNewSql){
+#	for new classes specify your options. Use MySqlComp if you use in your code old
+#	name convention style (last_insert_id) instead of new ones (lastInsertId).
+#	You can switch to MySql class later when you change method names in your code.
+	^use[MySqlComp.p]
+	$oSql[^MySqlComp::create[$SQL.connect-string;
+		$.bDebug(1)
+		$.sCacheDir[/../data/sql_cache]
+		$.dCacheInterval(1/24)
+	]]
+}{
+#	On Win32 rename old files because of Sql.p and sql.p are the same for OS.
+#	Add instruction for use old class before old constructor
+	^use[mysql.p]
+	$oSql[^mysql::init[$SQL.connect-string;
+		$.is_debug(1)
+		$.cache_dir[/../data/sql_cache]
+	]]
+}
+
+...
+#end @auto[]
+
+
+
+
+@postprocess[sBody]
+...
+^getSQLStat[$oSql]
+...
+#end @postprocess[]
+
+
+
+
+@getSQLStat[oSql][oSqlLog]
+^if(def $oSql){
+	^if($bNewSql){
+#		Add code for log statistics for new class.
+		^use[SqlLog.p]
+		$oSqlLog[^SqlLog::create[$oSql]]
+		^oSqlLog.log[
+			$.iQueryTimeLimit(500)
+			$.iQueriesLimit(25)
+			$.iQueryRowsLimit(3000)
+#			$.bExpandExceededQueriesToLog(1)
+			^if(def $form:mode && ^form:tables.mode.locate[field;debug]){
+				^rem{ *** for ?mode=debug collect all queries info and store it to separate file *** }
+				$.sFile[/../data/sql.txt]
+				$.bAll(1)
+			}{
+				^rem{ *** by default we log only pages with potential problems in sql queries *** }
+				$.sFile[/../data/sql.log]
+			}
+		]
+	}{
+#		Your old code which printed statistics to file
+		^if(def $form:mode && ^form:tables.mode.locate[field;debug]){
+			^rem{ *** for ?mode=debug collect all queries info and store it to separate file *** }
+			^oSql.printStatistics[$.file[/../data/sql.txt]]
+		}{
+			^rem{ *** by default we log only pages with potential problems in sql queries *** }
+			^oSql.printStatistics[
+				$.file[/../data/sql.log]
+				$.debug_time_limit(500)
+				$.debug_queries_limit(25)
+				$.debug_result_limit(3000)
+#				$.is_expand_exceeded_queries_to_log(1)
+			]
+		}
+	}
+}
+#end @getSQLStat[]
+
