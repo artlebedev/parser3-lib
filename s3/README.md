@@ -50,7 +50,7 @@ $ALLOW[
 		$.accessKeyId[]
 	]
 	$.my-bucket[
-		$.ip[^^10\.0\.0\.^#0-9^#0-9?^$]
+		$.ip[^^10\.0\.0\.]
 		$.accessKeyId[some-secret-id]
 	]
 ]
