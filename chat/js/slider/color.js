@@ -51,7 +51,7 @@ YAHOO.util.Color = new function() {
                var_b = var_2
            }
 
-           r = var_r * 255                  //rgb results = 0 ÷ 255
+           r = var_r * 255                  //rgb results = 0 Ã· 255
            g = var_g * 255
            b = var_b * 255
 
