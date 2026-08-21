@@ -196,8 +196,8 @@ GO
 /* Insert DEFAULT data		                                    */
 /*==============================================================*/
 SET IDENTITY_INSERT auser ON;
-INSERT INTO auser (auser_id, name, passwd, email, description, auser_type_id, rights, is_published, dt_register) VALUES (1, 'Owner', 'onwner', 'owner', 'Владелец объектов', 2, 16777215, 1, GETDATE());
-INSERT INTO auser (auser_id, name, passwd, email, description, auser_type_id, rights, is_published, dt_register) VALUES (2, 'Admins', 'group', 'group', 'Все администрирующие пользователи', 1, 16777215, 1, GETDATE());
+INSERT INTO auser (auser_id, name, passwd, email, description, auser_type_id, rights, is_published, dt_register) VALUES (1, 'Owner', 'onwner', 'owner', 'Р’Р»Р°РґРµР»РµС† РѕР±СЉРµРєС‚РѕРІ', 2, 16777215, 1, GETDATE());
+INSERT INTO auser (auser_id, name, passwd, email, description, auser_type_id, rights, is_published, dt_register) VALUES (2, 'Admins', 'group', 'group', 'Р’СЃРµ Р°РґРјРёРЅРёСЃС‚СЂРёСЂСѓСЋС‰РёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»Рё', 1, 16777215, 1, GETDATE());
 INSERT INTO auser (auser_id, name, passwd, email, description, auser_type_id, rights, is_published, dt_register) VALUES (3, 'admin', 'admin', 'misha@design.ru', '', 0, 16777215, 1, GETDATE());
 INSERT INTO auser_to_auser (auser_id, parent_id) VALUES (3,2);
 SET IDENTITY_INSERT auser OFF;

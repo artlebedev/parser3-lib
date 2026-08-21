@@ -7,23 +7,23 @@ scroller
 
 
 ###########################################################################
-# конструктор. первые 2 параметра обязательны. 
-# при инициализации расчитываются все параметры постраничной навигации
+# РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ. РїРµСЂРІС‹Рµ 2 РїР°СЂР°РјРµС‚СЂР° РѕР±СЏР·Р°С‚РµР»СЊРЅС‹. 
+# РїСЂРё РёРЅРёС†РёР°Р»РёР·Р°С†РёРё СЂР°СЃС‡РёС‚С‹РІР°СЋС‚СЃСЏ РІСЃРµ РїР°СЂР°РјРµС‚СЂС‹ РїРѕСЃС‚СЂР°РЅРёС‡РЅРѕР№ РЅР°РІРёРіР°С†РёРё
 
-# доступные поля:
-# $items_count 			- количество записей
-# $limit		 		- количество записей на страницу
-# $page_count 			- количество страниц
-# $current_page 		- N текущей страницы
-# $current_page_number	- порядковый номер текущей страницы
-# $current_page_name 	- название текущей страницы
-# $offset 				- смещение для получение первой записи текущей страницы (надодля sql запросов)
-# $direction 			- направление нумерации страниц ( < 0 то последняя страница имеет номер 1 )
-# $first_page 			- N первой страницы
-# $last_page 			- N последней страницы
-# $form_name			- название элемента формы через который передается номер страницы (по умолчанию "page")
+# РґРѕСЃС‚СѓРїРЅС‹Рµ РїРѕР»СЏ:
+# $items_count 			- РєРѕР»РёС‡РµСЃС‚РІРѕ Р·Р°РїРёСЃРµР№
+# $limit		 		- РєРѕР»РёС‡РµСЃС‚РІРѕ Р·Р°РїРёСЃРµР№ РЅР° СЃС‚СЂР°РЅРёС†Сѓ
+# $page_count 			- РєРѕР»РёС‡РµСЃС‚РІРѕ СЃС‚СЂР°РЅРёС†
+# $current_page 		- N С‚РµРєСѓС‰РµР№ СЃС‚СЂР°РЅРёС†С‹
+# $current_page_number	- РїРѕСЂСЏРґРєРѕРІС‹Р№ РЅРѕРјРµСЂ С‚РµРєСѓС‰РµР№ СЃС‚СЂР°РЅРёС†С‹
+# $current_page_name 	- РЅР°Р·РІР°РЅРёРµ С‚РµРєСѓС‰РµР№ СЃС‚СЂР°РЅРёС†С‹
+# $offset 				- СЃРјРµС‰РµРЅРёРµ РґР»СЏ РїРѕР»СѓС‡РµРЅРёРµ РїРµСЂРІРѕР№ Р·Р°РїРёСЃРё С‚РµРєСѓС‰РµР№ СЃС‚СЂР°РЅРёС†С‹ (РЅР°РґРѕРґР»СЏ sql Р·Р°РїСЂРѕСЃРѕРІ)
+# $direction 			- РЅР°РїСЂР°РІР»РµРЅРёРµ РЅСѓРјРµСЂР°С†РёРё СЃС‚СЂР°РЅРёС† ( < 0 С‚Рѕ РїРѕСЃР»РµРґРЅСЏСЏ СЃС‚СЂР°РЅРёС†Р° РёРјРµРµС‚ РЅРѕРјРµСЂ 1 )
+# $first_page 			- N РїРµСЂРІРѕР№ СЃС‚СЂР°РЅРёС†С‹
+# $last_page 			- N РїРѕСЃР»РµРґРЅРµР№ СЃС‚СЂР°РЅРёС†С‹
+# $form_name			- РЅР°Р·РІР°РЅРёРµ СЌР»РµРјРµРЅС‚Р° С„РѕСЂРјС‹ С‡РµСЂРµР· РєРѕС‚РѕСЂС‹Р№ РїРµСЂРµРґР°РµС‚СЃСЏ РЅРѕРјРµСЂ СЃС‚СЂР°РЅРёС†С‹ (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ "page")
 
-# пример создания объекта: $my_scroller[^scroller::init[$total_items_count;50;page]]
+# РїСЂРёРјРµСЂ СЃРѕР·РґР°РЅРёСЏ РѕР±СЉРµРєС‚Р°: $my_scroller[^scroller::init[$total_items_count;50;page]]
 
 @init[items_count;items_per_page;form_name;direction;page][is_full_page]
 ^if(!def $items_count){
@@ -82,21 +82,21 @@ $page_count(^math:ceiling($self.items_count / $limit))
 
 
 ###########################################################################
-# выводит html постраничной навигации
-# принимает параметры (хеш)
-# $mode				- тип вывода. сейчас умеет: html|xml
-# $nav_count		- количество отображаемых ссылок на страницы (по умолчанию 5)
-# $separator		- разделитель пропусков в страницах (по умолчанию "…")
-# $tag_name			- тег в котором все выводим
-# $tag_attr			- аттрибуты тега
-# $title			- заголовок постраничной навигации (по умолчанию "Страницы: ")
-# $left_divider		- разделитель между "Назад" и первой страницей (по умолчанию "")
-# $right_divider	- разделитель между последней страницей и "Дальше" (по умолчанию: "|")
-# $back_name		- "< Назад"
-# $forward_name		- "Дальше >"
-# $target_url		- URL куда мы будем переходить (по умолчанию "./")
+# РІС‹РІРѕРґРёС‚ html РїРѕСЃС‚СЂР°РЅРёС‡РЅРѕР№ РЅР°РІРёРіР°С†РёРё
+# РїСЂРёРЅРёРјР°РµС‚ РїР°СЂР°РјРµС‚СЂС‹ (С…РµС€)
+# $mode				- С‚РёРї РІС‹РІРѕРґР°. СЃРµР№С‡Р°СЃ СѓРјРµРµС‚: html|xml
+# $nav_count		- РєРѕР»РёС‡РµСЃС‚РІРѕ РѕС‚РѕР±СЂР°Р¶Р°РµРјС‹С… СЃСЃС‹Р»РѕРє РЅР° СЃС‚СЂР°РЅРёС†С‹ (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ 5)
+# $separator		- СЂР°Р·РґРµР»РёС‚РµР»СЊ РїСЂРѕРїСѓСЃРєРѕРІ РІ СЃС‚СЂР°РЅРёС†Р°С… (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ "вЂ¦")
+# $tag_name			- С‚РµРі РІ РєРѕС‚РѕСЂРѕРј РІСЃРµ РІС‹РІРѕРґРёРј
+# $tag_attr			- Р°С‚С‚СЂРёР±СѓС‚С‹ С‚РµРіР°
+# $title			- Р·Р°РіРѕР»РѕРІРѕРє РїРѕСЃС‚СЂР°РЅРёС‡РЅРѕР№ РЅР°РІРёРіР°С†РёРё (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ "РЎС‚СЂР°РЅРёС†С‹: ")
+# $left_divider		- СЂР°Р·РґРµР»РёС‚РµР»СЊ РјРµР¶РґСѓ "РќР°Р·Р°Рґ" Рё РїРµСЂРІРѕР№ СЃС‚СЂР°РЅРёС†РµР№ (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ "")
+# $right_divider	- СЂР°Р·РґРµР»РёС‚РµР»СЊ РјРµР¶РґСѓ РїРѕСЃР»РµРґРЅРµР№ СЃС‚СЂР°РЅРёС†РµР№ Рё "Р”Р°Р»СЊС€Рµ" (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ: "|")
+# $back_name		- "< РќР°Р·Р°Рґ"
+# $forward_name		- "Р”Р°Р»СЊС€Рµ >"
+# $target_url		- URL РєСѓРґР° РјС‹ Р±СѓРґРµРј РїРµСЂРµС…РѕРґРёС‚СЊ (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ "./")
 
-# пример вызова (после создания объекта $scroller):
+# РїСЂРёРјРµСЂ РІС‹Р·РѕРІР° (РїРѕСЃР»Рµ СЃРѕР·РґР°РЅРёСЏ РѕР±СЉРµРєС‚Р° $scroller):
 # ^my_scroller.print[
 #		$.mode[html]
 #		$.target_url[./]
@@ -121,12 +121,12 @@ $page_count(^math:ceiling($self.items_count / $limit))
 		$first_nav($last_nav - $nav_count)
 		^if($first_nav < 1){$first_nav(1)}
 	}
-	$separator[^if(def $lparams.separator){$lparams.separator}{…}]
+	$separator[^if(def $lparams.separator){$lparams.separator}{вЂ¦}]
 	$url_separator[^if(^lparams.target_url.pos[?]>=0){^taint[&]}{?}]
 	^if(def $lparams.tag_name){
 		<$lparams.tag_name $lparams.tag_attr>
 	}
-	$title[^if(def $lparams.title){$lparams.title}{Страницы: }]
+	$title[^if(def $lparams.title){$lparams.title}{РЎС‚СЂР°РЅРёС†С‹: }]
 	^if($mode eq "html"){
 		$title
 	}{
@@ -135,7 +135,7 @@ $page_count(^math:ceiling($self.items_count / $limit))
 		^if(def $lparams.right_divider){<right-divider>$lparams.right_divider</right-divider>}
 	}
 	^if($current_page != $first_page){
-		^print_nav_item[back;^if(def $lparams.back_name){$lparams.back_name}{&larr^; Назад};$lparams.target_url;$url_separator;^eval($current_page - $direction)]
+		^print_nav_item[back;^if(def $lparams.back_name){$lparams.back_name}{&larr^; РќР°Р·Р°Рґ};$lparams.target_url;$url_separator;^eval($current_page - $direction)]
 		^if($mode eq "html"){
 			^if(def $lparams.left_divider){$lparams.left_divider}
 		}
@@ -164,7 +164,7 @@ $page_count(^math:ceiling($self.items_count / $limit))
 		^if($mode eq "html"){
 			^if(def $lparams.right_divider){$lparams.right_divider}{|}
 		}
-		^print_nav_item[forward;^if(def $lparams.forward_name){$lparams.forward_name}{Дальше&nbsp^;&rarr^;};$lparams.target_url;$url_separator;^eval($current_page + $direction)]
+		^print_nav_item[forward;^if(def $lparams.forward_name){$lparams.forward_name}{Р”Р°Р»СЊС€Рµ&nbsp^;&rarr^;};$lparams.target_url;$url_separator;^eval($current_page + $direction)]
 	}
 	^if(def $lparams.tag_name){</$lparams.tag_name>}
 }
@@ -173,7 +173,7 @@ $page_count(^math:ceiling($self.items_count / $limit))
 
 
 ###########################################################################
-# выводит элемент постраничной навигации
+# РІС‹РІРѕРґРёС‚ СЌР»РµРјРµРЅС‚ РїРѕСЃС‚СЂР°РЅРёС‡РЅРѕР№ РЅР°РІРёРіР°С†РёРё
 @print_nav_item[type;name;url;url_separator;page_num]
 ^if($mode eq "html"){
 	^if($type eq "separator"){

@@ -1,4 +1,4 @@
-# $Id: mdate.p,v 1.1 2005/11/04 16:35:00 Никита Козин [wonder@nightmail.ru] Exp $
+# $Id: mdate.p,v 1.1 2005/11/04 16:35:00 РќРёРєРёС‚Р° РљРѕР·РёРЅ [wonder@nightmail.ru] Exp $
 @CLASS
 mDate
 

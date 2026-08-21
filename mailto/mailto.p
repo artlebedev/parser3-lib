@@ -1,10 +1,10 @@
-# $Id: mailto.p, v 1.05 2006/01/17 11:28:00 Никита Козин [wonder@nightmail.ru] Exp $
-#      Огромно спасибо Slash и Misha v.3
+# $Id: mailto.p, v 1.05 2006/01/17 11:28:00 РќРёРєРёС‚Р° РљРѕР·РёРЅ [wonder@nightmail.ru] Exp $
+#      РћРіСЂРѕРјРЅРѕ СЃРїР°СЃРёР±Рѕ Slash Рё Misha v.3
 @CLASS
 mailto
 
 
-# Метод шифрует переданный ему email
+# РњРµС‚РѕРґ С€РёС„СЂСѓРµС‚ РїРµСЂРµРґР°РЅРЅС‹Р№ РµРјСѓ email
 @print[email;params;type][params;data;_string;_encoded;i;_random]
 $data[^hash::create[]]
 $data.title[$email]
@@ -19,14 +19,14 @@ $data.title[$email]
 	$data.title[$params]
 }
 
-^rem{ *** Проверяем валидность переданного адреса *** }
+^rem{ *** РџСЂРѕРІРµСЂСЏРµРј РІР°Р»РёРґРЅРѕСЃС‚СЊ РїРµСЂРµРґР°РЅРЅРѕРіРѕ Р°РґСЂРµСЃР° *** }
 ^if(^email.pos[@] > 0 && ^email.match[^^\w+([.-]?\w+)+\@\w+([.-]?\w+)*\.[a-z]{2,4}^$][i]){
 	$_string[<a href="mailto:$email^if(def $data.subject){?subject=^taint[uri][$data.subject]}"^if(def $data.attributes){ $data.attributes}>$data.title</a>]
 }{
 	$_string[$email]
 }
 
-^rem{ *** Шифруем строку *** }
+^rem{ *** РЁРёС„СЂСѓРµРј СЃС‚СЂРѕРєСѓ *** }
 $i(0)
 ^while($i < ^_string.length[]){
 	$_random(^math:random(5) + 3)
@@ -34,7 +34,7 @@ $i(0)
 	^i.inc($_random)
 }
 
-^rem{ *** Возвращаем результат в зависимости от $type *** }
+^rem{ *** Р’РѕР·РІСЂР°С‰Р°РµРј СЂРµР·СѓР»СЊС‚Р°С‚ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ $type *** }
 ^switch[$type]{
 	^case[xml]{
 		$result[<email-crypted>^taint[xml][$_encoded]</email-crypted>]
@@ -46,7 +46,7 @@ $i(0)
 # end @print[]
 
 
-# метод шифрует все email в переданном тексте
+# РјРµС‚РѕРґ С€РёС„СЂСѓРµС‚ РІСЃРµ email РІ РїРµСЂРµРґР°РЅРЅРѕРј С‚РµРєСЃС‚Рµ
 @crypt[body;type]
 $result[^body.match[<(a) href=["']mailto:(.+?)(\?subject=(.+?))?["'](.*?)>(.+?)</\1>][gi]{
 	^self.print[$match.2][
