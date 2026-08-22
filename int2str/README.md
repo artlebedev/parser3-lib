@@ -40,4 +40,4 @@ The author was informed about the modifications, and with his permission, the mo
 
 The `int2str.zip` archive contains the number-to-words class with modifications by PAF and Misha v.3; `int2str.origin.zip` contains the original, unmodified class.
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/int2str/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/int2str/)

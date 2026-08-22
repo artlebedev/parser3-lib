@@ -26,4 +26,4 @@ One final note: if you don't understand anything about javascript — forget abo
 
 The `JSHttpRequest.zip` archive contains the class along with the developers' js and an example; `JSHttpRequest.3.x.zip` contains the old (3.x) version of the class, likewise with the developers' js and an example.
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/js_http_request/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/js_http_request/)

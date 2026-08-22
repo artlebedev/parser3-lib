@@ -4,7 +4,7 @@
 **Version**: 1.84
 **Tags**: Authentication
 
-To understand what `$oSql` is, you need to read [the article](https://www.parser.ru/lib/sql/), download one of the SQL classes mentioned in it, and hook it up in `auto.p`.
+To understand what `$oSql` is, you need to read [the article](https://www.parser.ru/en/lib/sql/), download one of the SQL classes mentioned in it, and hook it up in `auto.p`.
 
 The class and the scripts for generating the required tables come with fairly detailed comments, from which you can learn quite a lot about how the authentication class works.
 
@@ -21,4 +21,4 @@ You'll most likely want to change the login/logout forms' html/xml right away â€
 
 The authentication class, test files, and scripts for creating the required tables under MySQL, PgSQL, MS SQL, and Oracle. Includes breaking changes compared to the previous version.
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/auth/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/auth/)

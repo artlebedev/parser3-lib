@@ -90,6 +90,6 @@ $oFeed[^FeedRss::create[
 
 That's basically it :)
 
-Oh, I forgot to mention that these classes require the `dtf.p` class to be available, as well as the `ArrayList` and `ArrayListEnumerator` classes shamelessly "stolen" from smalex, which have since taken up residence among the [useful user-defined operators](https://www.parser.ru/lib/lib/).
+Oh, I forgot to mention that these classes require the `dtf.p` class to be available, as well as the `ArrayList` and `ArrayListEnumerator` classes shamelessly "stolen" from smalex, which have since taken up residence among the [useful user-defined operators](https://www.parser.ru/en/lib/lib/).
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/rss/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/rss/)

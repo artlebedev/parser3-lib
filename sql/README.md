@@ -145,4 +145,4 @@ If you need to clear all cache files, you can do so by calling `clear` with no p
 
 Now it's time for the fly in the ointment: the new classes are not compatible with the old ones. If you want to switch to them, you'll need to rewrite the code that creates the SQL class objects and the code that logs information to files. The parameters of SQL queries themselves are backward-compatible with the old code, though to keep the old method names working you need to use the `MySqlComp` & Co classes instead of `MySql` & Co (see `upgrade.txt` in this directory for detailed upgrade instructions).
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/sql/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/sql/)

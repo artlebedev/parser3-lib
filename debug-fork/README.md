@@ -20,4 +20,4 @@ Changes relative to the original class:
 
 [See the method in action](https://www.parser.ru/_/Debug/dstop-fork.html)
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/debug-fork/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/debug-fork/)

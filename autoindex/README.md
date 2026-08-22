@@ -65,4 +65,4 @@ Limitations: if you drop a lot of images into a directory, generating previews f
 
 I'm not planning to add functionality for modifying the original files, since the class's purpose is generating an index page with a file listing.
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/autoindex/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/autoindex/)

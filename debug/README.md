@@ -21,6 +21,6 @@ If a method or variable named `isDeveloper` is defined in `$MAIN`, the methods w
 
 See [the method in action](https://www.parser.ru/_/Debug/dstop.html) and [with commands in the hash](https://www.parser.ru/_/Debug/dstop.html#hide=.%20show=^(object|class)[0-9]).
 
-Other versions: [Mikhail Petrushin's version](https://www.parser.ru/lib/debug-fork/), [Grigory Zhizhilkin's version](http://code.google.com/p/dstop/source/browse/trunk/Debug.p).
+Other versions: [Mikhail Petrushin's version](https://www.parser.ru/en/lib/debug-fork/), [Grigory Zhizhilkin's version](http://code.google.com/p/dstop/source/browse/trunk/Debug.p).
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/debug/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/debug/)

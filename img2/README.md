@@ -81,4 +81,4 @@ $format[jpg]
 * Make sure `enctype="multipart/form-data"` is present — without this attribute you won't be able to pass files through the form, and don't forget to use POST as the data-submission method.
 * Specify the `action="path_to_file"` attribute on the `<form>` tag. Omitting it in IIS can cause an error (comment by Misha v.3).
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/img2/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/img2/)

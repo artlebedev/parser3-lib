@@ -187,4 +187,4 @@ If anyone uses other utilities for working with images, [feel free to contribute
 
 And that's really it. The archive `Img.zip` contains the `Img`, `ImageMagick`, and `NConvert` classes; a separate archive, `ImageResize.zip`, contains the `ImageResize` class, which simplifies resizing images.
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/img/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/img/)

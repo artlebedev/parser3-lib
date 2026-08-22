@@ -35,4 +35,4 @@ Print a birthday from the `$bithday` variable in `%d/%m/%Y` format:
 ###################################
 ```
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/date/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/date/)

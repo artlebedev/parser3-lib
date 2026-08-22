@@ -2,7 +2,7 @@
 
 A collection of reusable classes and utilities for the [Parser 3](https://www.parser.ru/en/) scripting language.
 
-This repository is the official mirror of [the Parser 3 class library](https://www.parser.ru/lib/).
+This repository is the official mirror of [the Parser 3 class library](https://www.parser.ru/en/lib/).
 
 | Library | Description |
 | ------- | ----------- |

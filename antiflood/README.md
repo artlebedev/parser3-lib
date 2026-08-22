@@ -79,4 +79,4 @@ Another possible approach to duplicate protection is storing UIDs in extra colum
 
 Honestly, you didn't even have to read everything written above — you could just download the class, which comes with a working example, and copy the pattern :)
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/antiflood/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/antiflood/)

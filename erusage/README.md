@@ -20,4 +20,4 @@ You can also call `^Erusage:log[$.sFile[/path/to/erusage.log]]` from `@postproce
 
 And now that's really everything :)
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/erusage/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/erusage/)

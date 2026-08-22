@@ -63,6 +63,6 @@ Oh, right, almost forgot… A couple of words about its "specific" settings… I
 
 When paginating with `direction=-1`, keep in mind that on pages 1 and 2 (though not at `page=1` and `page=2`) the information partially overlaps. This isn't a bug, it's a feature. It happens because pages are filled starting from the end — i.e. the last page (the one with `page=1`) is filled completely, the second-to-last one too, and so on up to the first page. But the first page needs to display the remainder of the messages. Sometimes it can turn out that this remainder is just a single message, and to avoid showing just one lone message on the first page, it instead displays the most recently added root-level messages. That's a trade-off you have to accept so that the page at a specific url (e.g. `./?page=1`) always contains the same messages (for example, so search engines index it correctly).
 
-P.S. To understand what `$pSQL` means in the example, read the [article about SQL query portability](https://www.parser.ru/examples/sql/), download one of the SQL classes mentioned in it, and hook it up in `auto.p`. The scroller class doesn't make any queries itself and doesn't use `$pSQL`.
+P.S. To understand what `$pSQL` means in the example, read the [article about SQL query portability](https://www.parser.ru/en/examples/sql/), download one of the SQL classes mentioned in it, and hook it up in `auto.p`. The scroller class doesn't make any queries itself and doesn't use `$pSQL`.
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/mscroller/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/mscroller/)

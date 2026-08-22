@@ -45,4 +45,4 @@ Usage example in `@postprocess[]`:
 
 Note: only links of the form `<a href="...">...</a>` will be processed.
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/mailto/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/mailto/)

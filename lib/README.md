@@ -137,4 +137,4 @@ The new library also includes an improved method for validating e-mail address f
 
 The library contains the static classes `Lib.p`, `FileSystem.p`, `Doc.p`, `Node.p`, `Convert.p`, `ArrayList.p`, and `ArrayListEnumerator.p`, as well as classes providing backward compatibility with the old operators.
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/lib/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/lib/)

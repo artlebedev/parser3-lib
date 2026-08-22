@@ -45,4 +45,4 @@ Returns the string:
 10.06.1986 15:10 / <font color="#cc0000">04.11.2005 16:35</font>
 ```
 
-[Original documentation on parser.ru](https://www.parser.ru/lib/mdate/)
+[Original documentation on parser.ru](https://www.parser.ru/en/lib/mdate/)
